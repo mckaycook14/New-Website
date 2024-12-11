@@ -1,0 +1,54 @@
+/* General styles */
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f0f8ff;
+    margin: 0;
+    padding: 0;
+}
+
+/* Game container */
+.game-container {
+    max-width: 500px;
+    margin: 50px auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Styling for the canvas */
+canvas {
+    border: 5px solid #2c3e50; /* Border added around the canvas */
+    background-color: #ecf0f1;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Styling for the score and instructions */
+h1 {
+    font-size: 2em;
+    color: #2c3e50;
+}
+
+p {
+    font-size: 1.2em;
+    color: #34495e;
+}
+
+/* Start button styling */
+button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2em;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #2980b9;
+}

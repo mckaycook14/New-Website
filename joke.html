@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game</title>
+    <link rel="stylesheet" href="css/jokestyles.css"> <!-- Link to external CSS file -->
+</head>
+<body>
+    <div class="game-container">
+        <h1>Snake Game</h1>
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
+        <p>Use arrow keys to control the snake!</p>
+        <p id="score">Score: 0</p>
+        <button id="startButton" onclick="startGame()">Start Game</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        const scale = 20;
+        const rows = canvas.height / scale;
+        const columns = canvas.width / scale;
+
+        let snake;
+        let food;
+        let score;
+        let gameInterval;
+        let gameStarted = false;
+
+        // Initialize the game when Start Game button is clicked
+        function startGame() {
+            if (gameStarted) return; // Prevent multiple game starts
+            gameStarted = true;
+            document.getElementById("startButton").style.display = "none"; // Hide the start button
+            document.querySelector("#score").textContent = `Score: ${score}`;
+            snake = new Snake();
+            food = new Food();
+            score = 0;
+            window.addEventListener("keydown", e => {
+                const direction = e.key.replace("Arrow", "").toLowerCase();
+                snake.changeDirection(direction);
+            });
+            gameInterval = window.setInterval(update, 200); // Slow down the snake by increasing interval (200ms)
+        }
+
+        function update() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+            drawBorder(); // Draw the border
+            snake.move();
+            snake.draw();
+            food.draw();
+            checkCollision();
+            document.querySelector("#score").textContent = `Score: ${score}`;
+        }
+
+        function checkCollision() {
+            if (snake.eat(food)) {
+                food = new Food();
+                score++;
+            }
+            if (snake.hitWall() || snake.hitSelf()) {
+                alert("Game Over! Your score was " + score);
+                resetGame();
+            }
+        }
+
+        function resetGame() {
+            clearInterval(gameInterval); // Stop the game loop
+            gameStarted = false;
+            document.getElementById("startButton").style.display = "inline-block"; // Show start button
+        }
+
+        // Snake class
+        function Snake() {
+            this.body = [{ x: 10, y: 10 }];
+            this.direction = "right";
+
+            this.draw = function () {
+                this.body.forEach((segment, index) => {
+                    ctx.fillStyle = index === 0 ? "green" : "black";
+                    ctx.fillRect(segment.x * scale, segment.y * scale, scale, scale);
+                });
+            };
+
+            this.move = function () {
+                const head = { ...this.body[0] };
+
+                if (this.direction === "up") head.y--;
+                if (this.direction === "down") head.y++;
+                if (this.direction === "left") head.x--;
+                if (this.direction === "right") head.x++;
+
+                this.body.unshift(head);
+                this.body.pop();
+            };
+
+            this.changeDirection = function (newDirection) {
+                if (this.direction === "up" && newDirection !== "down") this.direction = newDirection;
+                if (this.direction === "down" && newDirection !== "up") this.direction = newDirection;
+                if (this.direction === "left" && newDirection !== "right") this.direction = newDirection;
+                if (this.direction === "right" && newDirection !== "left") this.direction = newDirection;
+            };
+
+            this.eat = function (food) {
+                const head = this.body[0];
+                return head.x === food.x && head.y === food.y;
+            };
+
+            this.hitWall = function () {
+                const head = this.body[0];
+                return head.x < 0 || head.x >= columns || head.y < 0 || head.y >= rows;
+            };
+
+            this.hitSelf = function () {
+                const head = this.body[0];
+                for (let i = 1; i < this.body.length; i++) {
+                    if (head.x === this.body[i].x && head.y === this.body[i].y) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+        }
+
+        // Food class
+        function Food() {
+            this.x = Math.floor(Math.random() * columns);
+            this.y = Math.floor(Math.random() * rows);
+
+            this.draw = function () {
+                ctx.fillStyle = "red";
+                ctx.fillRect(this.x * scale, this.y * scale, scale, scale);
+            };
+        }
+
+        // Draw the border around the game area
+        function drawBorder() {
+            ctx.strokeStyle = "black";
+            ctx.lineWidth = 2;
+            ctx.strokeRect(0, 0, canvas.width, canvas.height);
+        }
+
+    </script>
+    <a href="golf.html">Back to Golf</a>
+</body>
+</html>
